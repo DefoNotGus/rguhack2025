@@ -3,29 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Psycho Ink.</title>
+    <title>Fire inc. - Text Adventure</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="image-container">
-        <img src="images/instructions.jpg" alt="Game Banner" class="game-image">
-    </div>
-    
-    <div class="score-container">
-        <p>Score: <span id="score">0</span></p>
-    </div>
-    
-    <div class="game-container">
-        <div id="game-output" class="game-output">
-            <p>Welcome to the Text Adventure!</p>
-            <p>Type 'help' to see available commands.</p>
+    <main class="game-wrapper">
+        <header class="game-header">
+            <h1>Fire Inc.</h1>
+            <div class="game-stats">
+                <div class="health-bar-container">
+                    <div class="health-bar"></div>
+                    <p>Health: <span id="health">100%</span></p>
+                </div>
+                <div class="inventory-display">
+                    <h2>Inventory</h2>
+                    <div id="player-inventory"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="image-container">
+            <img src="images/instructions.jpg" alt="Game instructions" class="game-image">
         </div>
-        <div class="input-container">
-            <input type="text" id="game-input" placeholder="Type your command...">
-            <button onclick="processCommand()">Submit</button>
-        </div>
-    </div>
-    
+        
+        <section class="game-container">
+            <div id="game-output" class="game-output" aria-live="polite">
+                <p class="welcome-message">Welcome to Fire Inc!</p>
+                <p class="help-hint">Type 'help' to see available commands.</p>
+            </div>
+            
+            <div class="input-container">
+                <label for="game-input" class="visually-hidden">Enter your command</label>
+                <input 
+                    type="text" 
+                    id="game-input" 
+                    class="game-input"
+                    placeholder="Type your command (go, look, take, drop)..."
+                    autocomplete="off"
+                    aria-label="Game command input"
+                >
+                <button 
+                    type="button"
+                    onclick="processCommand()"
+                    class="submit-button"
+                    aria-label="Submit command"
+                >
+                    Submit
+                </button>
+            </div>
+        </section>
+
+        <aside class="game-help">
+            <h2>Quick Commands</h2>
+            <ul class="command-list">
+                <li>look - Examine your surroundings</li>
+                <li>go [direction] - Move to a new location</li>
+                <li>take [item] - Pick up an item</li>
+                <li>drop [item] - Drop an item from inventory</li>
+                <li>inventory - Check your items</li>
+            </ul>
+        </aside>
+    </main>
+
+    <footer class="game-footer">
+        <p>&copy; 2025 Fire Inc. Text Adventure Game</p>
+    </footer>
+
     <script src="js/game.js"></script>
 </body>
 </html>

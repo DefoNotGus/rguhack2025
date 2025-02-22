@@ -1,0 +1,26 @@
+{
+    "bedroom": {
+        "description": "Main bedroom - dimly lit with a musty smell. Door leads east.",
+        "exits": { "east": "library" },
+        "items": ["flashlight", "health_potion"],
+        "health_impact": 0
+    },
+    "library": {
+        "description": "Dusty library with ancient books. Paths lead east and west.",
+        "exits": { "east": "laboratory", "west": "bedroom" },
+        "items": ["mysterious_book"],
+        "health_impact": -10
+    },
+    "laboratory": {
+        "description": "Eerie laboratory with bubbling experiments. Paths lead east and west.",
+        "exits": { "east": "vault", "west": "library" },
+        "items": ["antidote"],
+        "health_impact": -20
+    },
+    "vault": {
+        "description": "The final vault room! Contains the legendary treasure.",
+        "exits": { "west": "laboratory" },
+        "items": ["golden_chalice"],
+        "health_impact": -30
+    }
+}
