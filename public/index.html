@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psycho Ink.</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="image-container">
+        <img src="images/instructions.jpg" alt="Game Banner" class="game-image">
+    </div>
+    
+    <div class="score-container">
+        <p>Score: <span id="score">0</span></p>
+    </div>
+    
+    <div class="game-container">
+        <div id="game-output" class="game-output">
+            <p>Welcome to the Text Adventure!</p>
+            <p>Type 'help' to see available commands.</p>
+        </div>
+        <div class="input-container">
+            <input type="text" id="game-input" placeholder="Type your command...">
+            <button onclick="processCommand()">Submit</button>
+        </div>
+    </div>
+    
+    <script src="js/game.js"></script>
+</body>
+</html>
