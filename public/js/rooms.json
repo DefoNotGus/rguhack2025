@@ -2,7 +2,7 @@
     "Lab": {
         "description": "first level...",
         "exits": ["Hallway"],
-        "items": ["mask", "Fire gloves", "Lab coat"],
+        "items": [],
         "negative_impact": [],
         "positive_impact": [],
         "room_damage" : "0",
@@ -13,7 +13,7 @@
             "Exit the room"
         ]
     },
-    "Lab2": {
+    "Lab again": {
         "description": "first level...",
         "exits": ["Lab","Hallway"],
         "items": ["mask", "Fire gloves", "Lab coat"],
