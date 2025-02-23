@@ -107,10 +107,10 @@ body {
 }
 
 .welcome-message {
-    color: #44ff44; /* Verde fosforescente */
-    text-shadow: 0 0 10px #44ff44, 0 0 20px #44ff44, 0 0 30px #44ff44; /* Brillo neón */
+    color: #44ff44;
+    text-shadow: 0 0 10px #44ff44, 0 0 20px #44ff44, 0 0 30px #44ff44;
     font-size: 1.5rem;
-    animation: glow 1.5s ease-in-out infinite alternate; /* Animación opcional */
+    animation: glow 1.5s ease-in-out infinite alternate;
 }
 
 /* Input Container */
