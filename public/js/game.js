@@ -5,11 +5,13 @@ let inventory = [];
 let commandHistory = [];
 let commandIndex = -1;
 let progress = 0;
+let alarmActivated = false; // New variable to track alarm activation
+let wrongPathTaken = false; // New variable to track wrong path
 
 // Winning sequence
 const winningPath = [
     { room: "Lab", option: 1 },
-    { room: "Lab", option: 4 },
+    { room: "Lab2", option: 3 },
     { room: "Hallway", option: 4 },
     { room: "Lobby", option: 1 },
     { room: "Assambly Point" }
@@ -43,7 +45,7 @@ function displayRoomInfo() {
     message += `⚡ Available Actions:\n`;
 
     room.options.forEach((option, index) => {
-        message += `   ${index + 1}. ${option}\n`;
+        message += `  ${index + 1}. ${option}\n`;
     });
 
     displayMessage(message);
@@ -53,7 +55,7 @@ function displayRoomInfo() {
 function displayMessage(msg) {
     const output = document.getElementById("game-output");
     const p = document.createElement("p");
-    p.innerHTML = msg.replace(/\n/g, "<br>"); // Preserve line breaks
+    p.innerHTML = msg.replace(/\n/g, "<br>");
     output.appendChild(p);
     output.scrollTop = output.scrollHeight;
 }
@@ -64,7 +66,9 @@ function resetGame() {
     health = 100;
     inventory = [];
     progress = 0;
-    displayMessage("Game reset! You are back in the Lab.");
+    alarmActivated = false;
+    wrongPathTaken = false;
+    displayMessage("Game reset!\n You just woke up from a nap\n You are back in the Lab.");
     displayRoomInfo();
 }
 
@@ -88,23 +92,21 @@ function processCommand() {
         displayMessage("Health: " + health + "%");
     } else if (command === "take") {
         let item = args.slice(1).join(" ");
-        
-        // Ensure the room has items before trying to take one
+
         if (!gameData[currentRoom].items || gameData[currentRoom].items.length === 0) {
             displayMessage("There are no items to take here.");
             return;
         }
-        
-        // Check if the item exists in the room
+
         if (!gameData[currentRoom].items.includes(item)) {
             displayMessage(`"${item}" is not in this room.`);
         } else if (inventory.length >= 4) {
             displayMessage("You can't carry more than 4 items.");
         } else {
-            inventory.push(item); // Add item to inventory
-            gameData[currentRoom].items = gameData[currentRoom].items.filter(i => i !== item); // Remove from room
+            inventory.push(item);
+            gameData[currentRoom].items = gameData[currentRoom].items.filter(i => i !== item);
             displayMessage(`You picked up ${item}.`);
-            displayRoomInfo(); // Refresh room info to reflect removed item
+            displayRoomInfo();
         }
     } else if (!isNaN(command) || gameData[currentRoom].options.includes(input)) {
         let choiceIndex = isNaN(command) ? gameData[currentRoom].options.indexOf(input) : parseInt(command) - 1;
@@ -114,30 +116,66 @@ function processCommand() {
             return;
         }
 
-        // Enforce correct sequence
         if (progress < winningPath.length) {
             let nextStep = winningPath[progress];
             if (nextStep.room !== currentRoom || (nextStep.option !== undefined && nextStep.option - 1 !== choiceIndex)) {
-                displayMessage("Wrong choice! Restarting game.");
+                displayMessage("Wrong choice! You have fainted!.\n");
                 resetGame();
                 return;
             }
             progress++;
         }
-
-        // Handle special lose conditions
-        if (currentRoom === "Lab" && choiceIndex === 3 && progress < 1) {
-            currentRoom = "BlockedLobby";
-            displayMessage("You are now in BlockedLobby. You must restart.");
+        // Special Lab logic
+        if (currentRoom === "Lab" && choiceIndex === 0) {
+            alarmActivated = true;
+            displayMessage("The alarms are now blaring!");
+            currentRoom = "Lab2";
+            displayRoomInfo();
             return;
         }
+
+        if (currentRoom === "Lab" && choiceIndex === 3) {
+            wrongPathTaken = true;
+        }
         if (currentRoom === "Hallway" && choiceIndex === 1) {
+            wrongPathTaken = true;
+        }
+
+        if (wrongPathTaken) {
             currentRoom = "BlockedLobby";
             displayMessage("You took the wrong path. You must restart.");
             return;
         }
 
-        // Handle health reduction
+        // Handle negative impacts
+        if (gameData[currentRoom].negative_impact && gameData[currentRoom].negative_impact.length > 0) {
+            gameData[currentRoom].negative_impact.forEach(item => {
+                if (inventory.includes(item)) {
+                    displayMessage(`The ${item} is causing problems!`);
+                    let negativeDamage = 10;
+                    health -= negativeDamage;
+                    displayMessage(`You lost an extra ${negativeDamage}% health.`);
+                    if (health <= 0) {
+                        resetGame();
+                        return;
+                    }
+                }
+            });
+        }
+
+        // Handle positive impacts
+        if (gameData[currentRoom].positive_impact && gameData[currentRoom].positive_impact.length > 0) {
+            gameData[currentRoom].positive_impact.forEach(item => {
+                if (inventory.includes(item)) {
+                    displayMessage(`The ${item} is helping!`);
+                    let reducedDamage = 10;
+                    health += reducedDamage;
+                    displayMessage(`You gained ${reducedDamage}% health.`);
+                }
+            });
+        }
+
+        // Handle room damage
         let damage = parseInt(gameData[currentRoom].room_damage);
         if (damage > 0) {
             health -= damage;
@@ -148,16 +186,21 @@ function processCommand() {
             }
         }
 
-        // Move to next room
+        //Special item effect
+        if (inventory.includes("Fire Extinguisher") && currentRoom === "Lobby" && choiceIndex === 0) {
+            gameData["Lobby"].room_damage = 0;
+            displayMessage("You used the fire extinguisher and put out the fire!");
+            displayRoomInfo();
+            return;
+        }
+
         if (progress < winningPath.length) {
             currentRoom = winningPath[progress].room;
             displayMessage(`Moved to ${currentRoom}.`);
         }
 
-        // Display the new room info
         displayRoomInfo();
 
-        // Winning condition
         if (currentRoom === "Assambly Point") {
             displayMessage("🎉 You win! 🎉");
             resetGame();

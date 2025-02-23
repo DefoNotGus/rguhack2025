@@ -13,9 +13,21 @@
             "Exit the room"
         ]
     },
+    "Lab2": {
+        "description": "first level...",
+        "exits": ["Lab","Hallway"],
+        "items": ["mask", "Fire gloves", "Lab coat"],
+        "negative_impact": [],
+        "positive_impact": [],
+        "room_damage" : "0",
+        "options": ["Jump out of a windows",
+            "Keep working",
+            "Exit the room"
+        ]
+    },
     "Hallway": {
         "description": "Sec level.",
-        "exits": ["Lab", "Lobby", "BlockedLobby"],
+        "exits": ["Lab2", "Lobby", "BlockedLobby"],
         "items": ["Fire Extinguisher", "Cycling Helmet", "Power Bank"],
         "negative_impact": [],
         "positive_impact": [],
