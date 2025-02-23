@@ -1,26 +1,30 @@
 {
-    "bedroom": {
+    "Lab": {
         "description": "Main bedroom - dimly lit with a musty smell. Door leads east.",
-        "exits": { "east": "library" },
-        "items": ["flashlight", "health_potion"],
-        "health_impact": 0
+        "exits": ["Hallway"],
+        "items": ["Mask", "Fire gloves", "Lab coat"],
+        "negative_impact": [],
+        "positive_impact" : []
     },
-    "library": {
+    "Hallway": {
         "description": "Dusty library with ancient books. Paths lead east and west.",
-        "exits": { "east": "laboratory", "west": "bedroom" },
-        "items": ["mysterious_book"],
-        "health_impact": -10
+        "exits": ["Lab", "Lobby"],
+        "items": ["Fire Extinguisher" , "Cycling Helmet", "Power Bank"],
+        "negative_impact": [],
+        "positive_impact" : []
     },
-    "laboratory": {
+    "Lobby": {
         "description": "Eerie laboratory with bubbling experiments. Paths lead east and west.",
-        "exits": { "east": "vault", "west": "library" },
-        "items": ["antidote"],
-        "health_impact": -20
+        "exits": ["Hallway", "Assambly Point"],
+        "items": ["Plastic Boot", "Soup in can", "Pillow"],
+        "negative_impact": ["Plastic Boot","Cycling Helmet", "Lab coat"],
+        "positive_impact" : []
     },
-    "vault": {
-        "description": "The final vault room! Contains the legendary treasure.",
-        "exits": { "west": "laboratory" },
-        "items": ["golden_chalice"],
-        "health_impact": -30
+    "Assambly Point": {
+        "description": "The space outside where everyone is safe",
+        "exits": ["Lobby"],
+        "items": ["Pizza!"],
+        "negative_impact": [],
+        "positive_impact" : []
     }
 }
