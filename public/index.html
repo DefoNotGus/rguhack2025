@@ -1,74 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire inc. - Text Adventure</title>
+    <title>Fire Inc. - Text Adventure</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <main class="game-wrapper">
-        <header class="game-header">
-            <h1>Fire Inc.</h1>
-            <div class="game-stats">
-                <div class="health-bar-container">
-                    <div class="health-bar"></div>
-                    <p>Health: <span id="health">100%</span></p>
-                </div>
-                <div class="inventory-display">
-                    <h2>Inventory</h2>
-                    <div id="player-inventory"></div>
-                </div>
+<main class="game-wrapper">
+    <header class="game-header">
+        <h1>Fire Inc.</h1>
+        <div class="game-stats">
+            <div class="health-bar-container">
+                <div class="health-bar"></div>
+                <p>Health: <span id="health">100%</span></p>
             </div>
-        </header>
-
-        <div class="image-container">
-            <img src="images/instructions.jpg" alt="Game instructions" class="game-image">
         </div>
-        
-        <section class="game-container">
-            <div id="game-output" class="game-output" aria-live="polite">
-                <p class="welcome-message">Welcome to Fire Inc!</p>
-                <p class="help-hint">Type 'help' to see available commands.</p>
-            </div>
-            
-            <div class="input-container">
-                <label for="game-input" class="visually-hidden">Enter your command</label>
-                <input 
-                    type="text" 
-                    id="game-input" 
+    </header>
+
+    <!-- Instructions-->
+    <section class="game-instructions">
+        <h2>Game Instructions</h2>
+        <div class="instructions-content">
+            <h3>Welcome to <strong>Fire Inc.</strong>!</h3>
+            <p>
+                You are a student in the RGU chemistry lab.
+                Suddenly, a fire breaks out in the building. Your mission is to escape alive, but it won't be easy. The fire is spreading quickly,
+                and toxic smoke fills the hallways. You'll need to make quick decisions and use the right protective equipment to survive.
+            </p>
+        </div>
+    </section>
+
+    <section class="game-container">
+        <div id="game-output" class="game-output" aria-live="polite">
+            <p class="welcome-message">Start Game</p>
+            <p class="help-hint">Type 'help' to see available commands.</p>
+        </div>
+
+        <div class="input-container">
+            <label for="game-input" class="visually-hidden">Enter your command</label>
+            <input
+                    type="text"
+                    id="game-input"
                     class="game-input"
                     placeholder="Type your command (go, look, take, drop)..."
                     autocomplete="off"
                     aria-label="Game command input"
-                >
-                <button 
+            >
+            <button
                     type="button"
                     onclick="processCommand()"
                     class="submit-button"
                     aria-label="Submit command"
-                >
-                    Submit
-                </button>
-            </div>
-        </section>
+            >
+                Submit
+            </button>
+        </div>
+    </section>
 
-        <aside class="game-help">
-            <h2>Quick Commands</h2>
-            <ul class="command-list">
-                <li>look - Examine your surroundings</li>
-                <li>go [direction] - Move to a new location</li>
-                <li>take [item] - Pick up an item</li>
-                <li>drop [item] - Drop an item from inventory</li>
-                <li>inventory - Check your items</li>
-            </ul>
-        </aside>
-    </main>
+    <aside class="game-help">
+        <h2>Quick Commands</h2>
+        <ul class="command-list">
+            <li>look - Examine your surroundings</li>
+            <li>go [direction] - Move to a new location</li>
+            <li>take [item] - Pick up an item</li>
+            <li>drop [item] - Drop an item from inventory</li>
+            <li>inventory - Check your items</li>
+        </ul>
+    </aside>
+</main>
 
-    <footer class="game-footer">
-        <p>&copy; 2025 Fire Inc. Text Adventure Game</p>
-    </footer>
+<footer class="game-footer">
+    <p>&copy; 2025 Fire Inc. Text Adventure Game</p>
+</footer>
 
-    <script src="js/game.js"></script>
+<script src="js/game.js"></script>
 </body>
 </html>
