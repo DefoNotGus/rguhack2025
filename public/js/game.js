@@ -3,8 +3,13 @@ let gameState = {
     currentRoom: 'Lab',
     inventory: [],
     health: 100,
-    gameLog: []
+    gameLog: [],
+    passedOption1: false // Tracks if Option 1 in Room 1 was chosen
 };
+
+// Command history tracking
+let commandHistory = [];
+let historyIndex = -1;
 
 // Load rooms data from JSON
 async function loadRooms() {
@@ -24,7 +29,7 @@ function displayRoom(rooms) {
     message += `Description: ${room.description}\n\n`;
 
     if (room.items.length > 0) {
-        message += `Items in the room:\n - ${room.items.join("\n - ")}\n\n`;
+        message += `\n Items in the room:\n - ${room.items.join("\n - ")}\n\n`;
     }
 
     message += `Available Actions:\n`;
@@ -57,8 +62,8 @@ function applyRoomEffects(rooms) {
     // If health is 0 or below, reset the player to Lab
     if (gameState.health <= 0) {
         displayMessage("You fainted. You wake up back in the Lab.");
-        gameState.health = 100;  // Reset health
-        gameState.currentRoom = 'Lab';  // Reset to starting room
+        gameState.health = 100;    // Reset health
+        gameState.currentRoom = 'Lab';    // Reset to starting room
     }
 }
 
@@ -72,13 +77,34 @@ async function chooseOption(input, rooms) {
         return;
     }
 
-    if (choice === "Exit the room" || choice === "Follow Emergency exit signs" || choice === "Extinguish Fire" || choice === "Scream for help" || choice === "Celebrate safety") {
-        // Move to the next logical room
-        let nextRoom = room.exits[0];
+    let nextRoom = null;
+
+    // Implement winning path logic
+    if (gameState.currentRoom === "Room1" && choice === "Option 1") {
+        gameState.passedOption1 = true; // Track that player chose Option 1
+        nextRoom = "Room1"; // Room 1 comes up again but with limited options
+    } else if (gameState.currentRoom === "Room1" && gameState.passedOption1 && choice === "Option 3") {
+        nextRoom = "Room2";
+    } else if (gameState.currentRoom === "Room2" && choice === "Option 4") {
+        nextRoom = "Room3";
+    } else if (gameState.currentRoom === "Room3" && choice === "Option 1") {
+        nextRoom = "Room4";
+    } else if (gameState.currentRoom === "Room4") {
+        displayMessage("Congratulations! You won the game!");
+        return;
+    }
+
+    // Implement "BlockedLobby" conditions
+    if (gameState.currentRoom === "Room1" && choice === "Option 4" && !gameState.passedOption1) {
+        nextRoom = "BlockedLobby";
+    } else if (gameState.currentRoom === "Room2" && choice === "Option 2") {
+        nextRoom = "BlockedLobby";
+    }
+
+    if (nextRoom) {
         gameState.currentRoom = nextRoom;
         displayMessage(`You chose correctly. Moving to ${nextRoom}...`);
     } else {
-        // Wrong choice → Send them back to Lab
         displayMessage("Wrong decision. You panic and rush back to the Lab.");
         gameState.currentRoom = "Lab";
     }
@@ -90,24 +116,7 @@ async function chooseOption(input, rooms) {
 // Available commands
 const commands = {
     help: () => {
-        displayMessage('Available commands: look, move [room], take [item], drop [item], inventory, health, [option number/text]');
-    },
-
-    look: async () => {
-        const rooms = await loadRooms();
-        displayRoom(rooms);
-    },
-
-    move: async (destination) => {
-        const rooms = await loadRooms();
-        if (!rooms[gameState.currentRoom].exits.includes(destination)) {
-            displayMessage("You can't go there.");
-            return;
-        }
-        gameState.currentRoom = destination;
-        displayMessage(`Moving to ${destination}...`);
-        applyRoomEffects(rooms);
-        displayRoom(rooms);
+        displayMessage('Available commands: take [item], inventory, health, [option number/text]');
     },
 
     take: async (item) => {
@@ -115,24 +124,16 @@ const commands = {
         const room = rooms[gameState.currentRoom];
 
         if (room.items.includes(item)) {
+            if (gameState.inventory.length >= 4) {
+                let removedItem = gameState.inventory.shift(); // Remove oldest item
+                displayMessage(`Inventory is full. You dropped ${removedItem} to pick up ${item}.`);
+            }
             gameState.inventory.push(item);
             room.items = room.items.filter(i => i !== item);
             displayMessage(`You picked up ${item}.`);
         } else {
             displayMessage(`There is no ${item} here.`);
         }
-    },
-
-    drop: async (item) => {
-        if (!gameState.inventory.includes(item)) {
-            displayMessage(`You don't have ${item}.`);
-            return;
-        }
-
-        const rooms = await loadRooms();
-        gameState.inventory = gameState.inventory.filter(i => i !== item);
-        rooms[gameState.currentRoom].items.push(item);
-        displayMessage(`You dropped ${item}.`);
     },
 
     inventory: () => {
@@ -152,6 +153,12 @@ const commands = {
 async function processCommand() {
     const inputElement = document.getElementById('game-input');
     const input = inputElement.value.trim();
+
+    if (!input) return;
+
+    // Store command in history
+    commandHistory.push(input);
+    historyIndex = commandHistory.length; // Reset index to allow new commands
     inputElement.value = '';
 
     displayMessage('> ' + input);
@@ -182,6 +189,26 @@ async function initGame() {
     document.getElementById('game-input').addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
             processCommand();
+        }
+    });
+
+    // Command history navigation with Up/Down keys
+    document.getElementById('game-input').addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowUp') {
+            if (historyIndex > 0) {
+                historyIndex--;
+                this.value = commandHistory[historyIndex];
+            }
+            event.preventDefault();
+        } else if (event.key === 'ArrowDown') {
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                this.value = commandHistory[historyIndex];
+            } else {
+                historyIndex = commandHistory.length;
+                this.value = ''; // Clears input if at the latest command
+            }
+            event.preventDefault();
         }
     });
 }
