@@ -1,217 +1,190 @@
-// Game state
-let gameState = {
-    currentRoom: 'Lab',
-    inventory: [],
-    health: 100,
-    gameLog: [],
-    passedOption1: false // Tracks if Option 1 in Room 1 was chosen
-};
-
-// Command history tracking
+let gameData = {};
+let currentRoom = "Lab";
+let health = 100;
+let inventory = [];
 let commandHistory = [];
-let historyIndex = -1;
+let commandIndex = -1;
+let progress = 0;
 
-// Load rooms data from JSON
-async function loadRooms() {
+// Winning sequence
+const winningPath = [
+    { room: "Lab", option: 1 },
+    { room: "Lab", option: 4 },
+    { room: "Hallway", option: 4 },
+    { room: "Lobby", option: 1 },
+    { room: "Assambly Point" }
+];
+
+// Fetch the room data
+async function loadGameData() {
     try {
-        const response = await fetch('rooms.json');
-        return await response.json();
+        const response = await fetch("js/rooms.json");
+        gameData = await response.json();
+        displayMessage("Welcome to Fire Inc.!");
+        displayRoomInfo();
     } catch (error) {
-        console.error('Error loading rooms:', error);
-        return {};
+        console.error("Error loading game data:", error);
+        displayMessage("Error loading game data. Please try again.");
     }
 }
 
-// Display the room info neatly
-function displayRoom(rooms) {
-    const room = rooms[gameState.currentRoom];
-    let message = `Room: ${gameState.currentRoom}\n\n`;
-    message += `Description: ${room.description}\n\n`;
-
-    if (room.items.length > 0) {
-        message += `\n Items in the room:\n - ${room.items.join("\n - ")}\n\n`;
+// Display the current room's state
+function displayRoomInfo() {
+    const room = gameData[currentRoom];
+    if (!room) {
+        displayMessage("Error: Room data missing!");
+        return;
     }
 
-    message += `Available Actions:\n`;
+    let message = `📍 You are in ${currentRoom}\n`;
+    message += `📝 ${room.description}\n`;
+    message += `🚪 Exits: ${room.exits.join(", ")}\n`;
+    message += `🎒 Items: ${room.items.length > 0 ? room.items.join(", ") : "None"}\n`;
+    message += `⚡ Available Actions:\n`;
+
     room.options.forEach((option, index) => {
-        message += ` ${index + 1}. ${option}\n`;
+        message += `   ${index + 1}. ${option}\n`;
     });
 
     displayMessage(message);
 }
 
-// Process the player's health effects
-function applyRoomEffects(rooms) {
-    const room = rooms[gameState.currentRoom];
-
-    // Check negative impact items in inventory
-    let hasNegativeItems = gameState.inventory.some(item => room.negative_impact.includes(item));
-    if (hasNegativeItems) {
-        gameState.health -= 40;
-        displayMessage("You feel weaker due to hazardous items in your inventory. Health reduced by 40%.");
-    }
-
-    // Check for room damage if no protective items are in inventory
-    let roomDamage = parseInt(room.room_damage) || 0;
-    let hasProtection = gameState.inventory.some(item => room.positive_impact.includes(item));
-    if (roomDamage > 0 && !hasProtection) {
-        gameState.health -= roomDamage;
-        displayMessage(`The environment affects you. You take ${roomDamage}% damage.`);
-    }
-
-    // If health is 0 or below, reset the player to Lab
-    if (gameState.health <= 0) {
-        displayMessage("You fainted. You wake up back in the Lab.");
-        gameState.health = 100;    // Reset health
-        gameState.currentRoom = 'Lab';    // Reset to starting room
-    }
+// Display messages in the game output
+function displayMessage(msg) {
+    const output = document.getElementById("game-output");
+    const p = document.createElement("p");
+    p.innerHTML = msg.replace(/\n/g, "<br>"); // Preserve line breaks
+    output.appendChild(p);
+    output.scrollTop = output.scrollHeight;
 }
 
-// Player selects an option
-async function chooseOption(input, rooms) {
-    const room = rooms[gameState.currentRoom];
-    const choice = isNaN(input) ? input : room.options[parseInt(input) - 1];
-
-    if (!room.options.includes(choice)) {
-        displayMessage("Invalid option. Choose a valid action.");
-        return;
-    }
-
-    let nextRoom = null;
-
-    // Implement winning path logic
-    if (gameState.currentRoom === "Room1" && choice === "Option 1") {
-        gameState.passedOption1 = true; // Track that player chose Option 1
-        nextRoom = "Room1"; // Room 1 comes up again but with limited options
-    } else if (gameState.currentRoom === "Room1" && gameState.passedOption1 && choice === "Option 3") {
-        nextRoom = "Room2";
-    } else if (gameState.currentRoom === "Room2" && choice === "Option 4") {
-        nextRoom = "Room3";
-    } else if (gameState.currentRoom === "Room3" && choice === "Option 1") {
-        nextRoom = "Room4";
-    } else if (gameState.currentRoom === "Room4") {
-        displayMessage("Congratulations! You won the game!");
-        return;
-    }
-
-    // Implement "BlockedLobby" conditions
-    if (gameState.currentRoom === "Room1" && choice === "Option 4" && !gameState.passedOption1) {
-        nextRoom = "BlockedLobby";
-    } else if (gameState.currentRoom === "Room2" && choice === "Option 2") {
-        nextRoom = "BlockedLobby";
-    }
-
-    if (nextRoom) {
-        gameState.currentRoom = nextRoom;
-        displayMessage(`You chose correctly. Moving to ${nextRoom}...`);
-    } else {
-        displayMessage("Wrong decision. You panic and rush back to the Lab.");
-        gameState.currentRoom = "Lab";
-    }
-
-    applyRoomEffects(rooms);
-    displayRoom(rooms);
+// Reset game on loss
+function resetGame() {
+    currentRoom = "Lab";
+    health = 100;
+    inventory = [];
+    progress = 0;
+    displayMessage("Game reset! You are back in the Lab.");
+    displayRoomInfo();
 }
 
-// Available commands
-const commands = {
-    help: () => {
-        displayMessage('Available commands: take [item], inventory, health, [option number/text]');
-    },
-
-    take: async (item) => {
-        const rooms = await loadRooms();
-        const room = rooms[gameState.currentRoom];
-
-        if (room.items.includes(item)) {
-            if (gameState.inventory.length >= 4) {
-                let removedItem = gameState.inventory.shift(); // Remove oldest item
-                displayMessage(`Inventory is full. You dropped ${removedItem} to pick up ${item}.`);
-            }
-            gameState.inventory.push(item);
-            room.items = room.items.filter(i => i !== item);
-            displayMessage(`You picked up ${item}.`);
-        } else {
-            displayMessage(`There is no ${item} here.`);
-        }
-    },
-
-    inventory: () => {
-        if (gameState.inventory.length === 0) {
-            displayMessage('Your inventory is empty.');
-        } else {
-            displayMessage('Inventory: ' + gameState.inventory.join(', '));
-        }
-    },
-
-    health: () => {
-        displayMessage(`Your health: ${gameState.health}%`);
-    }
-};
-
-// Process user input
-async function processCommand() {
-    const inputElement = document.getElementById('game-input');
-    const input = inputElement.value.trim();
-
+// Process user commands
+function processCommand() {
+    let input = document.getElementById("game-input").value.toLowerCase().trim();
     if (!input) return;
 
-    // Store command in history
     commandHistory.push(input);
-    historyIndex = commandHistory.length; // Reset index to allow new commands
-    inputElement.value = '';
+    commandIndex = commandHistory.length;
+    document.getElementById("game-input").value = "";
 
-    displayMessage('> ' + input);
-    const rooms = await loadRooms();
+    const args = input.split(" ");
+    const command = args[0];
 
-    if (commands[input]) {
-        commands[input]();
-    } else if (!isNaN(input) || rooms[gameState.currentRoom].options.includes(input)) {
-        chooseOption(input, rooms);
+    if (command === "help") {
+        displayMessage("Commands: help, inventory, health, take [item], [option number] or [option text]");
+    } else if (command === "inventory") {
+        displayMessage("You have: " + (inventory.length ? inventory.join(", ") : "nothing"));
+    } else if (command === "health") {
+        displayMessage("Health: " + health + "%");
+    } else if (command === "take") {
+        let item = args.slice(1).join(" ");
+        
+        // Ensure the room has items before trying to take one
+        if (!gameData[currentRoom].items || gameData[currentRoom].items.length === 0) {
+            displayMessage("There are no items to take here.");
+            return;
+        }
+        
+        // Check if the item exists in the room
+        if (!gameData[currentRoom].items.includes(item)) {
+            displayMessage(`"${item}" is not in this room.`);
+        } else if (inventory.length >= 4) {
+            displayMessage("You can't carry more than 4 items.");
+        } else {
+            inventory.push(item); // Add item to inventory
+            gameData[currentRoom].items = gameData[currentRoom].items.filter(i => i !== item); // Remove from room
+            displayMessage(`You picked up ${item}.`);
+            displayRoomInfo(); // Refresh room info to reflect removed item
+        }
+    } else if (!isNaN(command) || gameData[currentRoom].options.includes(input)) {
+        let choiceIndex = isNaN(command) ? gameData[currentRoom].options.indexOf(input) : parseInt(command) - 1;
+
+        if (choiceIndex < 0 || choiceIndex >= gameData[currentRoom].options.length) {
+            displayMessage("Invalid choice.");
+            return;
+        }
+
+        // Enforce correct sequence
+        if (progress < winningPath.length) {
+            let nextStep = winningPath[progress];
+            if (nextStep.room !== currentRoom || (nextStep.option !== undefined && nextStep.option - 1 !== choiceIndex)) {
+                displayMessage("Wrong choice! Restarting game.");
+                resetGame();
+                return;
+            }
+            progress++;
+        }
+
+        // Handle special lose conditions
+        if (currentRoom === "Lab" && choiceIndex === 3 && progress < 1) {
+            currentRoom = "BlockedLobby";
+            displayMessage("You are now in BlockedLobby. You must restart.");
+            return;
+        }
+        if (currentRoom === "Hallway" && choiceIndex === 1) {
+            currentRoom = "BlockedLobby";
+            displayMessage("You took the wrong path. You must restart.");
+            return;
+        }
+
+        // Handle health reduction
+        let damage = parseInt(gameData[currentRoom].room_damage);
+        if (damage > 0) {
+            health -= damage;
+            displayMessage(`You lost ${damage}% health.`);
+            if (health <= 0) {
+                resetGame();
+                return;
+            }
+        }
+
+        // Move to next room
+        if (progress < winningPath.length) {
+            currentRoom = winningPath[progress].room;
+            displayMessage(`Moved to ${currentRoom}.`);
+        }
+
+        // Display the new room info
+        displayRoomInfo();
+
+        // Winning condition
+        if (currentRoom === "Assambly Point") {
+            displayMessage("🎉 You win! 🎉");
+            resetGame();
+        }
     } else {
-        displayMessage("Invalid command. Type 'help' for options.");
+        displayMessage("Unknown command.");
     }
 }
 
-// Display message in the game output
-function displayMessage(message) {
-    const outputElement = document.getElementById('game-output');
-    gameState.gameLog.push(message);
-    outputElement.innerHTML = gameState.gameLog.map(msg => `<p>${msg}</p>`).join('');
-    outputElement.scrollTop = outputElement.scrollHeight;
-}
-
-// Initialize game
-async function initGame() {
-    const rooms = await loadRooms();
-    displayRoom(rooms);
-
-    document.getElementById('game-input').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            processCommand();
+// Handle keyboard input for command history
+document.getElementById("game-input").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        processCommand();
+    } else if (event.key === "ArrowUp") {
+        if (commandIndex > 0) {
+            commandIndex--;
+            document.getElementById("game-input").value = commandHistory[commandIndex];
         }
-    });
-
-    // Command history navigation with Up/Down keys
-    document.getElementById('game-input').addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowUp') {
-            if (historyIndex > 0) {
-                historyIndex--;
-                this.value = commandHistory[historyIndex];
-            }
-            event.preventDefault();
-        } else if (event.key === 'ArrowDown') {
-            if (historyIndex < commandHistory.length - 1) {
-                historyIndex++;
-                this.value = commandHistory[historyIndex];
-            } else {
-                historyIndex = commandHistory.length;
-                this.value = ''; // Clears input if at the latest command
-            }
-            event.preventDefault();
+    } else if (event.key === "ArrowDown") {
+        if (commandIndex < commandHistory.length - 1) {
+            commandIndex++;
+            document.getElementById("game-input").value = commandHistory[commandIndex];
+        } else {
+            document.getElementById("game-input").value = "";
         }
-    });
-}
+    }
+});
 
-// Start the game when the page loads
-window.addEventListener('load', initGame);
+// Load the game data
+loadGameData();

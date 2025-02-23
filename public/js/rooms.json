@@ -2,7 +2,7 @@
     "Lab": {
         "description": "first level...",
         "exits": ["Hallway"],
-        "items": ["Mask", "Fire gloves", "Lab coat"],
+        "items": ["mask", "Fire gloves", "Lab coat"],
         "negative_impact": [],
         "positive_impact": [],
         "room_damage" : "0",

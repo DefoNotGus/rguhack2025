@@ -17,6 +17,8 @@ To win the game, follow this exact sequence: 1️⃣ Room 1 → Choose Option 1
 4️⃣ Room 3 → Choose Option 1
 5️⃣ Room 4 → Choose any option → 🎉 You win! 🎉
 
+You can do Room 1 option 4 straight away but then you will lose in room 3
+
 🚧 Blocked Lobby Conditions
 You will be sent to BlockedLobby if:
 
