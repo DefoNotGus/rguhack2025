@@ -22,7 +22,7 @@
         "room_damage" : "0",
         "options": [
             "Use the elevator",
-            "Is staircase",
+            "Use staircase",
             "Return to the Lab",
             "Follow Emergency exit signs"
         ]
