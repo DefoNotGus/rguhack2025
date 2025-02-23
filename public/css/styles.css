@@ -27,7 +27,7 @@ body {
 
 .game-header h1 {
     font-size: 2.5rem;
-    color: #fff;
+    color: #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
     margin: 0;
     letter-spacing: 1px;
@@ -69,11 +69,20 @@ body {
 }
 
 .game-instructions h2 {
-    color: #44ff44; /* Verde fosforescente */
-    text-shadow: 0 0 10px #44ff44, 0 0 20px #44ff44, 0 0 30px #44ff44; /* Brillo neón */
+    color: #44ff44;
+    text-shadow: 0 0 10px #44ff44, 0 0 20px rgba(68, 255, 68, 0), 0 0 30px rgba(68, 255, 68, 0);
     font-size: 2.2rem;
     margin-bottom: 1rem;
-    animation: glow 1.5s ease-in-out infinite alternate; /* Animación opcional */
+    animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px rgba(68, 255, 68, 0), 0 0 20px rgba(68, 255, 68, 0), 0 0 30px rgba(68, 255, 68, 0);
+    }
+    to {
+        text-shadow: 0 0 20px rgba(68, 255, 68, 0), 0 0 30px rgba(68, 255, 68, 0), 0 0 40px rgba(68, 255, 68, 0);
+    }
 }
 
 .instructions-content h3 {
@@ -84,6 +93,44 @@ body {
 
 .instructions-content p {
     font-size: 1.1rem;
+}
+
+/* Commands styles */
+.commands-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.commands-table th, .commands-table td {
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: left;
+}
+
+.commands-table th {
+    background-color: #354d69;
+    color: #fff;
+}
+
+.commands-table td {
+    background-color: rgba(40, 40, 40, 0.9);
+}
+
+.instructions-content ul, .instructions-content ol {
+    margin: 1rem 0;
+    padding-left: 20px;
+}
+
+.instructions-content li {
+    margin-bottom: 10px;
+}
+
+.instructions-content code {
+    background: rgba(40, 40, 40, 0.9);
+    padding: 2px 5px;
+    border-radius: 3px;
+    color: #ffcc00;
 }
 
 /* Game Container */
@@ -107,10 +154,9 @@ body {
 }
 
 .welcome-message {
-    color: #44ff44; /* Verde fosforescente */
-    text-shadow: 0 0 10px #44ff44, 0 0 20px #44ff44, 0 0 30px #44ff44; /* Brillo neón */
+    color: #44ff44;
+    text-shadow: 0 0 10px rgb(68, 255, 68), 0 0 20px rgb(68, 255, 68), 0 0 30px rgb(68, 255, 68);
     font-size: 1.5rem;
-    animation: glow 1.5s ease-in-out infinite alternate; /* Animación opcional */
 }
 
 /* Input Container */
@@ -192,16 +238,6 @@ body {
     margin-top: 2rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     border: 1px solid #444;
-}
-
-/* Animations */
-@keyframes glow {
-    from {
-        text-shadow: 0 0 10px #44ff44, 0 0 20px rgba(68, 255, 68, 0), 0 0 30px rgba(68, 255, 68, 0);
-    }
-    to {
-        text-shadow: 0 0 20px rgba(68, 255, 68, 0), 0 0 30px rgba(68, 255, 68, 0), 0 0 40px rgba(68, 255, 68, 0);
-    }
 }
 
 /* Responsive Styles */

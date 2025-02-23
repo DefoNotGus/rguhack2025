@@ -18,7 +18,7 @@
         </div>
     </header>
 
-    <!-- Instructions-->
+    <!-- Instructions -->
     <section class="game-instructions">
         <h2>Welcome to <strong>Fire Inc.</strong>!</h2>
         <div class="instructions-content">
@@ -28,6 +28,81 @@
                 Suddenly, a fire breaks out in the building. Your mission is to escape alive, but it won't be easy. The fire is spreading quickly,
                 and toxic smoke fills the hallways. You'll need to make quick decisions and use the right protective equipment to survive.
             </p>
+
+            <h3>⌨️ Commands</h3>
+            <table class="commands-table">
+                <tr>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>help</code></td>
+                    <td>Displays a list of available commands.</td>
+                </tr>
+                <tr>
+                    <td><code>inventory</code></td>
+                    <td>Shows the items you are carrying.</td>
+                </tr>
+                <tr>
+                    <td><code>health</code></td>
+                    <td>Displays your current health percentage.</td>
+                </tr>
+                <tr>
+                    <td><code>take [item]</code></td>
+                    <td>Picks up an item from the room (max 4 items).</td>
+                </tr>
+                <tr>
+                    <td><code>[option number]</code> or <code>[option text]</code></td>
+                    <td>Selects an action in the current room.</td>
+                </tr>
+            </table>
+
+            <h3>🔹 Example:</h3>
+            <ul>
+                <li>To pick up an item: <code>take key</code></li>
+                <li>To check your health: <code>health</code></li>
+                <li>To choose an option: <code>1</code> or <code>Option 1</code></li>
+            </ul>
+
+            <h3>🛣️ Winning Path</h3>
+            <p>To win the game, follow this exact sequence:</p>
+            <ol>
+                <li>Room 1 → Choose Option 1</li>
+                <li>Room 1 (again) → Choose Option 3</li>
+                <li>Room 2 → Choose Option 4</li>
+                <li>Room 3 → Choose Option 1</li>
+                <li>Room 4 → Choose any option → 🎉 You win! 🎉</li>
+            </ol>
+
+            <h3>🚧 Blocked Lobby Conditions</h3>
+            <p>You will be sent to BlockedLobby if:</p>
+            <ul>
+                <li>You choose Option 4 in Room 1 before Option 1.</li>
+                <li>You choose Option 2 in Room 2.</li>
+            </ul>
+            <p>If this happens, you cannot proceed and must restart.</p>
+
+            <h3>🔄 Command History Navigation</h3>
+            <p>You can scroll through past commands just like in a terminal:</p>
+            <ul>
+                <li>⬆️ Arrow Up → Go back to the previous command.</li>
+                <li>⬇️ Arrow Down → Move forward to the next command (or clear input).</li>
+            </ul>
+
+            <h3>💀 Health & Damage System</h3>
+            <ul>
+                <li>Some rooms reduce health if you don't have protective items.</li>
+                <li>Hazardous items in your inventory can reduce health.</li>
+                <li>If health reaches 0%, you faint and wake up back in the Lab with 100% health.</li>
+            </ul>
+
+            <h3>🎮 Game Controls</h3>
+            <ol>
+                <li>Type commands into the input box.</li>
+                <li>Press Enter to execute a command.</li>
+                <li>Use Arrow Up/Down to navigate past commands.</li>
+                <li>Read the output in the game window.</li>
+            </ol>
         </div>
     </section>
 
