@@ -55,10 +55,10 @@ body {
     text-align: center;
     margin: 0.5rem 0 0;
     font-size: 1.1rem;
-    color: #e0e0e0;
+    color: #ffffff;
 }
 
-/* Instruction */
+/* Instructions */
 .game-instructions {
     background: rgba(30, 30, 30, 0.95);
     padding: 1.5rem;
@@ -68,8 +68,16 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
+.game-instructions h2 {
+    color: #44ff44; /* Verde fosforescente */
+    text-shadow: 0 0 10px #44ff44, 0 0 20px #44ff44, 0 0 30px #44ff44; /* Brillo neón */
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    animation: glow 1.5s ease-in-out infinite alternate; /* Animación opcional */
+}
+
 .instructions-content h3 {
-    color: #44ff44;
+    color: #ffffff;
     margin-top: 0;
     font-size: 1.4rem;
 }
@@ -98,7 +106,14 @@ body {
     border: 1px solid #333;
 }
 
-/* command input */
+.welcome-message {
+    color: #44ff44; /* Verde fosforescente */
+    text-shadow: 0 0 10px #44ff44, 0 0 20px #44ff44, 0 0 30px #44ff44; /* Brillo neón */
+    font-size: 1.5rem;
+    animation: glow 1.5s ease-in-out infinite alternate; /* Animación opcional */
+}
+
+/* Input Container */
 .input-container {
     display: flex;
     gap: 1rem;
@@ -139,7 +154,7 @@ body {
     box-shadow: 0 4px 12px rgba(53, 122, 189, 0.4);
 }
 
-/* help panel */
+/* Help Panel */
 .game-help {
     background: rgba(30, 30, 30, 0.95);
     padding: 1.5rem;
@@ -167,7 +182,7 @@ body {
     transform: translateX(5px);
 }
 
-/* footer */
+/* Footer */
 .game-footer {
     background: rgba(30, 30, 30, 0.95);
     padding: 1.5rem;
@@ -180,18 +195,16 @@ body {
 }
 
 /* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px #44ff44, 0 0 20px rgba(68, 255, 68, 0), 0 0 30px rgba(68, 255, 68, 0);
+    }
+    to {
+        text-shadow: 0 0 20px rgba(68, 255, 68, 0), 0 0 30px rgba(68, 255, 68, 0), 0 0 40px rgba(68, 255, 68, 0);
+    }
 }
 
-.welcome-message {
-    animation: fadeIn 1.5s ease-out;
-    color: #44ff44;
-    font-size: 1.2rem;
-}
-
-/* responsive styles */
+/* Responsive Styles */
 @media (max-width: 768px) {
     .game-header h1 {
         font-size: 2rem;
