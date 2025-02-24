@@ -4,17 +4,62 @@ let currentRoom = "Lab";  // Tracks the player's current location
 let health = 100;  // Player's health
 let inventory = [];  // Items the player has collected
 let block_checker = false;  // Controls access to certain rooms based on choices
+let playeremoji = ""
+let choosingEmoji = true; 
 
 // Asynchronously loads game data from a JSON file
 async function loadGameData() {
     try {
         const response = await fetch("js/rooms.json"); // Fetch the room data
         gameData = await response.json(); // Parse JSON data and store it in gameData
-        displayMessage("You just woke up in a RGU lab\n There is smoke everywhere... \n Good luck!");
-        displayRoomInfo(); // Display initial room information
+        displayMessage("You just woke up in a RGU lab \n Sleeping in the job again...");
+        askForEmoji(); // Ask for emoji first
     } catch (error) {
         console.error("Error loading game data:", error);
         displayMessage("Error loading game data. Please try again."); // Show error message if data fails to load
+    }
+}
+// Function to ask the player to choose an emoji
+function askForEmoji() {
+    displayMessage("Choose your player emoji:\n1. 🦜 (Parrot)\n2. 😎 (Cool)\n3. 🤡 (Clown)\n4. 👻 (Ghost)");
+    document.getElementById("game-input").addEventListener("keydown", handleEmojiInput);
+}
+
+// Function to handle emoji input
+function handleEmojiInput(event) {
+    if (event.key === "Enter") {
+        let input = document.getElementById("game-input").value.trim();
+        let emoji;
+
+        switch (input) {
+            case "1":
+            case "🦜":
+                emoji = "🦜";
+                break;
+            case "2":
+            case "😎":
+                emoji = "😎";
+                break;
+            case "3":
+            case "🤡":
+                emoji = "🤡";
+                break;
+            case "4":
+            case "👻":
+                emoji = "👻";
+                break;
+            default:
+                displayMessage("Invalid choice. Please choose from 1-4 or the emojis.");
+                return;
+        }
+
+        playeremoji = emoji;
+        displayMessage(`You chose ${playeremoji}!`);
+        document.getElementById("game-input").value = "";
+        document.getElementById("game-input").removeEventListener("keydown", handleEmojiInput);
+        choosingEmoji = false; // Set flag to false
+        displayMessage("You just woke up in a RGU lab\n There is smoke everywhere... \n Good luck!");
+        displayRoomInfo();
     }
 }
 
@@ -26,11 +71,19 @@ function displayRoomInfo() {
         return;
     }
 
-    let message = `📍 You are in the ${currentRoom}\n`;
-    message += `📝 ${room.description}\n`;
-    message += `🎒 Items: ${room.items.length > 0 ? room.items.join(", ") : "None"}\n`;
-    message += `⚡ Available Actions:\n`;
+    let message = ""; // Initialize message
 
+    if (currentRoom === "BlockedLobby") {
+        message = `📍 You are in the Lobby\n`; // Use "Lobby" instead of "BlockedLobby"
+        message += `📝 ${room.description}\n`;
+        message += `🎒 Items: ${room.items.length > 0 ? room.items.join(", ") : "None"}\n`;
+        message += `⚡ Available Actions:\n`;
+    } else {
+        message = `📍 You are in the ${currentRoom}\n`;
+        message += `📝 ${room.description}\n`;
+        message += `🎒 Items: ${room.items.length > 0 ? room.items.join(", ") : "None"}\n`;
+        message += `⚡ Available Actions:\n`;
+    }
     // List available options in the room
     room.options.forEach((option, index) => {
         message += `  ${index + 1}. ${option}\n`;
@@ -57,6 +110,11 @@ function typeWriterEffect(text, speed = 10) {
             }
             index++;
             setTimeout(type, speed); // Recursively call with a delay
+        } else {
+            // Scroll to bottom after the entire message is typed
+            requestAnimationFrame(() => {
+                outputElement.scrollTop = outputElement.scrollHeight;
+            });
         }
     }
     type();
@@ -66,28 +124,80 @@ function typeWriterEffect(text, speed = 10) {
 function displayMessage(msg) {
     const output = document.getElementById("game-output");
     const p = document.createElement("p");
-    p.innerHTML = msg.replace(/\n/g, "<br>"); // Convert \n to <br> for proper formatting
+    p.innerHTML = msg.replace(/\n/g, "<br>");
     output.appendChild(p);
-    output.scrollTop = output.scrollHeight; // Auto-scroll to the latest message
+
+    // Use requestAnimationFrame to ensure the scroll happens after the DOM updates
+    requestAnimationFrame(() => {
+        output.scrollTop = output.scrollHeight;
+    });
 }
 
+function handleWrongChoice() {
+    displayMessage("❌ You have fainted!");
+    resetGame();
+}
+
+function handleWin() {
+    displayMessage("🎉 You win! 🎉");
+    displayMessage("Restarting game...\nReady!\n Use 'reset' command");
+}
 // Resets the game to the initial state
+// Function to reset the game's core state
 function resetGame() {
-    currentRoom = "Lab"; // Reset the player to the starting room
-    health = 100; // Restore full health
-    inventory = []; // Empty inventory
-    block_checker = false; // Reset room access control
-    displayMessage("You just woke up from a nap\n You are back in the Lab.");
-    displayRoomInfo(); // Show the initial room info again
+    currentRoom = "Lab";
+    health = 100;
+    inventory = [];
+    block_checker = false;
+    displayMessage("It was all a dream...");
+    displayRoomInfo();
 }
 
+// Function to change the player's emoji and reset game
+function changeEmoji() {
+    playeremoji = "";
+    choosingEmoji = true;
+    displayMessage("Please choose your new emoji.");
+    askForEmoji();
+
+}
+
+// Function to update the health bar and text
+function updateHealthDisplay() {
+    const healthBar = document.querySelector('.health-bar');
+    const healthText = document.getElementById('health');
+
+    if (healthBar && healthText) {
+        healthBar.style.width = `${health}%`;
+        healthText.textContent = `${health}%`;
+
+        if (health > 70) {
+            healthBar.style.backgroundColor = 'green';
+        } else if (health > 30) {
+            healthBar.style.backgroundColor = 'orange';
+        } else {
+            healthBar.style.backgroundColor = 'red';
+        }
+    }
+}
 // Processes player input commands
 function processCommand() {
     let input = document.getElementById("game-input").value.trim().toLowerCase();
     if (!input) return;
 
+    let decision = input; // Default to input
+
+    // Check if the input is a number between 1 and 5
+    if (!isNaN(input) && parseInt(input) >= 1 && parseInt(input) <= 5) {
+        let choiceIndex = parseInt(input) - 1; // Convert input to index
+
+        if (gameData[currentRoom] && gameData[currentRoom].options && gameData[currentRoom].options[choiceIndex]) {
+            decision = gameData[currentRoom].options[choiceIndex]; // Use the room option
+        }
+    }
+
     // Display user's command in the game output
-    displayMessage(`➡️ <strong>You:</strong> ${input}`);
+    displayMessage(`${playeremoji} <strong>You:</strong> ${decision}`);
 
     document.getElementById("game-input").value = ""; // Clear input field
 
@@ -97,11 +207,12 @@ function processCommand() {
     if (command === "help") {
         displayMessage(`
             📜 <strong>Available Commands:</strong><br>
-            <strong>1, 2, 3...</strong> - Choose an option to move<br>
+            <strong>Make decisions</strong> - Choose an option to move<br>
             <strong>take [item]</strong> - Pick up an item in the room<br>
             <strong>inventory</strong> - View your collected items<br>
             <strong>health</strong> - Check your health status<br>
             <strong>reset</strong> - Restart the game
+            <strong>restart</strong> - Change emoji and start from zero!
         `);
         return;
     }
@@ -130,6 +241,10 @@ function processCommand() {
     }
     if (command === "reset") {
         resetGame();
+        return;
+    }
+    if (command === "restart") {
+        changeEmoji();
         return;
     }
     if (command === "inventory") {
@@ -164,16 +279,14 @@ function processCommand() {
                 currentRoom = "Hallway";
                 block_checker = false;
             } else {
-                displayMessage("❌ Wrong choice! You have fainted!");
-                resetGame();
+                handleWrongChoice();
                 return;
             }
         } else if (currentRoom === "Lab again") {
             if (choiceIndex === 2) {
                 currentRoom = "Hallway";
             } else {
-                displayMessage("❌ Wrong choice! You have fainted!");
-                resetGame();
+                handleWrongChoice();
                 return;
             }
         } else if (currentRoom === "Hallway") {
@@ -186,46 +299,43 @@ function processCommand() {
                     currentRoom = "BlockedLobby";
                 }
             } else {
-                displayMessage("❌ Wrong choice! You have fainted!");
-                resetGame();
+                handleWrongChoice();
                 return;
             }
         } else if (currentRoom === "Lobby") {
             if (choiceIndex === 0) {
-                currentRoom = "Assembly Point";
+                if (inventory.includes("fire extinguisher")) {
+                    currentRoom = "Assembly Point";
+                } else {
+                    displayMessage("🔥 I can't go through the fire without a fire extinguisher!");
+                    handleWrongChoice();
+                    return; 
+                }
             } else {
-                displayMessage("❌ Wrong choice! You have fainted!");
-                resetGame();
+                handleWrongChoice();
                 return;
             }
         } else if (currentRoom === "BlockedLobby") {
-            displayMessage("❌ Wrong choice! You have fainted!");
-            resetGame();
+            handleWrongChoice();
             return;
-            
-        } else if (currentRoom === "Assambly Point") {
-            displayMessage("🎉 You win! 🎉");
-            
-            setTimeout(() => {
-                displayMessage("Restarting game...");
-                resetGame();
-            }, 5000); // 5-second delay before restarting
+        } else if (currentRoom === "Assembly Point") {
+            handleWin();
             return;
         }
         
 
         // Health system logic
         let damage = parseInt(gameData[currentRoom].room_damage);
-        let requiredItems = gameData[currentRoom].positive_impact; // Items that prevent damage
-        let missingItems = requiredItems.filter(item => !inventory.includes(item)); // Items player doesn't have
+        let requiredItems = gameData[currentRoom].positive_impact;
+        let missingItems = requiredItems.filter(item => !inventory.includes(item));
 
         if (damage > 0) {
             if (missingItems.length === 0) {
-                damage = 0; // No damage if player has all required items
+                damage = 0;
             } else {
                 health -= damage;
-                let missingItemsMessage = missingItems.length > 0 
-                    ? `🛑 You needed: <strong>${missingItems.join(", ")}</strong> to avoid damage!` 
+                let missingItemsMessage = missingItems.length > 0
+                    ? `🛑 You needed: <strong>${missingItems.join(", ")}</strong> to avoid damage!`
                     : "";
 
                 displayMessage(`💔 You lost ${damage}% health. ${missingItemsMessage}`);
@@ -248,7 +358,8 @@ function processCommand() {
             }
         });
 
-        displayRoomInfo(); // Show updated room information
+        updateHealthDisplay(); // Update health display after damage
+        displayRoomInfo();
     } else {
         displayMessage("❓ Unknown command. Type <strong>help</strong> for a list of commands.");
     }
@@ -258,7 +369,7 @@ function processCommand() {
 
 // Adds an event listener to process commands when Enter is pressed
 document.getElementById("game-input").addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !choosingEmoji) { //Only process command if not choosing emoji
         processCommand();
     }
 });

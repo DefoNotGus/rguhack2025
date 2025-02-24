@@ -1,78 +1,80 @@
 {
     "Lab": {
-        "description": "first level...",
+        "description": "There is smoke and a burnt smell in the air... \n I wonder who is cooking ",
         "exits": ["Hallway"],
         "items": [],
         "negative_impact": [],
         "positive_impact": [],
-        "room_damage" : "0",
+        "room_damage": "0",
         "options": [
-            "Activate alarms",
-            "Jump out of a windows",
-            "Keep working",
-            "Exit the room"
+            "activate alarms",
+            "jump out of a windows",
+            "keep working",
+            "exit the room"
         ]
     },
     "Lab again": {
-        "description": "first level...",
-        "exits": ["Lab","Hallway"],
-        "items": ["mask", "Fire gloves", "Lab coat"],
+        "description": "Alarm is going loud now... Probably woke up other sleepers",
+        "exits": ["Lab", "Hallway"],
+        "items": ["mask", "fire gloves", "lab coat"],
         "negative_impact": [],
         "positive_impact": [],
-        "room_damage" : "0",
-        "options": ["Jump out of a windows",
-            "Keep working",
-            "Exit the room"
+        "room_damage": "0",
+        "options": [
+            "jump out of a windows",
+            "keep working",
+            "exit the room"
         ]
     },
     "Hallway": {
-        "description": "Sec level.",
+        "description": "is full of smoke in here, its hard to breathe",
         "exits": ["Lab2", "Lobby", "BlockedLobby"],
-        "items": ["Fire Extinguisher", "Cycling Helmet", "Power Bank"],
+        "items": ["fire extinguisher", "cycling helmet", "power bank"],
         "negative_impact": [],
-        "positive_impact": [],
-        "room_damage" : "0",
+        "positive_impact": ["mask"],
+        "room_damage": "25",
         "options": [
-            "Use the elevator",
-            "Use staircase",
-            "Return to the Lab",
-            "Follow Emergency exit signs"
+            "use the elevator",
+            "use staircase",
+            "return to the lab",
+            "follow emergency exit signs"
         ]
     },
     "Lobby": {
-        "description": "third level",
+        "description": "*there is fire everywhere* this room smells like a BBQ... oh wait... it's me!",
         "exits": ["Hallway", "Assambly Point"],
-        "items": ["Plastic Boot", "Soup in can", "Pillow"],
-        "negative_impact": ["Plastic Boot", "Cycling Helmet", "Lab coat"],
+        "items": ["plastic boot", "soup in can", "pillow"],
+        "negative_impact": ["plastic boot", "cycling helmet", "lab coat"],
         "positive_impact": ["mask"],
-        "room_damage" : "25%",
+        "room_damage": "25%",
         "options": [
-            "Extinguish Fire",
-            "Return to Hallway",
-            "Steal from the vending machine"
+            "extinguish fire",
+            "return to hallway",
+            "steal from the vending machine"
         ]
     },
     "BlockedLobby": {
-        "description": "third level - Blocked",
+        "description": "This room is burning and the emergency doors are closed!",
         "exits": ["Hallway", "Assambly Point"],
-        "items": ["Plastic Boot", "Soup in can", "Pillow"],
-        "negative_impact": ["Plastic Boot", "Cycling Helmet", "Lab coat"],
-        "positive_impact": [""],
-        "room_damage" : "55%",
-        "options": ["Return to Hallway",
-            "Scream for help"
+        "items": ["plastic boot", "soup in can", "pillow"],
+        "negative_impact": ["plastic boot", "cycling helmet", "lab coat"],
+        "positive_impact": [],
+        "room_damage": "55%",
+        "options": [
+            "return to hallway",
+            "scream for help"
         ]
     },
-    "Assambly Point": {
-        "description": "The space outside where everyone is safe",
+    "Assembly Point": {
+        "description": "the space outside where everyone is safe",
         "exits": ["Lobby"],
-        "items": ["Pizza!"],
+        "items": ["pizza!"],
         "negative_impact": [],
         "positive_impact": [],
-        "room_damage" : "0",
+        "room_damage": "0",
         "options": [
-            "Celebrate safety",
-            "Post it on Instagram"
+            "celebrate safety",
+            "post it on Instagram"
         ]
     }
 }

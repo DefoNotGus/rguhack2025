@@ -144,12 +144,13 @@ body {
 }
 
 .game-output {
-    height: 400px;
+    height: 800px;
     padding: 1rem;
     background: rgba(0, 0, 0, 0.8);
     border-radius: 8px;
     margin-bottom: 1.5rem;
     overflow-y: auto;
+    overflow-anchor: none;
     border: 1px solid #333;
 }
 
@@ -157,6 +158,9 @@ body {
     color: #44ff44;
     text-shadow: 0 0 10px rgb(68, 255, 68), 0 0 20px rgb(68, 255, 68), 0 0 30px rgb(68, 255, 68);
     font-size: 1.5rem;
+}
+.help-hint {
+    color: greenyellow
 }
 
 /* Input Container */
@@ -172,7 +176,7 @@ body {
     border: 2px solid #444;
     padding: 12px;
     border-radius: 8px;
-    color: #e0e0e0;
+    color: #848f84;
     font-size: 1.1rem;
     transition: all 0.3s ease;
 }
