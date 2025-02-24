@@ -44,7 +44,7 @@
         "exits": ["Hallway", "Assambly Point"],
         "items": ["Plastic Boot", "Soup in can", "Pillow"],
         "negative_impact": ["Plastic Boot", "Cycling Helmet", "Lab coat"],
-        "positive_impact": ["Fire Extinguisher"],
+        "positive_impact": ["mask"],
         "room_damage" : "25%",
         "options": [
             "Extinguish Fire",
