@@ -19,9 +19,9 @@ async function loadGameData() {
         displayMessage("Error loading game data. Please try again."); // Show error message if data fails to load
     }
 }
-// Function to ask the player to choose an emoji
+// Function to ask the player to choose an emoji with typewriter effect
 function askForEmoji() {
-    displayMessage("Choose your player emoji:\n1. 🦜 (Parrot)\n2. 😎 (Cool)\n3. 🤡 (Clown)\n4. 👻 (Ghost)");
+    typeWriterEffect("Choose your player emoji:\n1. 🦜 (Parrot)\n2. 😎 (Cool)\n3. 🤡 (Clown)\n4. 👻 (Ghost)");
     document.getElementById("game-input").addEventListener("keydown", handleEmojiInput);
 }
 
@@ -62,19 +62,29 @@ function handleEmojiInput(event) {
         displayRoomInfo();
     }
 }
+//Change Image
+function updateRoomImage() {
+    const imageElement = document.getElementById("game-illustration"); // Ensure this ID exists in your HTML
+    if (imageElement) {
+        imageElement.src = `img/${currentRoom}.png`; // Set the new image source
+        imageElement.alt = `Image of ${currentRoom}`; // Update alt text for accessibility
+    } else {
+        console.warn("Room image element not found!");
+    }
+}
 
-// Displays room information with a typewriter effect after a delay
+// Displays room information
 function displayRoomInfo() {
-    const room = gameData[currentRoom]; // Get current room data
+    const room = gameData[currentRoom];
     if (!room) {
-        setTimeout(() => typeWriterEffect("Error: Room data missing!"), 1000);
+        displayMessage("Error: Room data missing!");
         return;
     }
+    updateRoomImage();
 
-    let message = ""; // Initialize message
-
+    let message = "";
     if (currentRoom === "BlockedLobby") {
-        message = `📍 You are in the Lobby\n`; // Use "Lobby" instead of "BlockedLobby"
+        message = `📍 You are in the Lobby\n`;
         message += `📝 ${room.description}\n`;
         message += `🎒 Items: ${room.items.length > 0 ? room.items.join(", ") : "None"}\n`;
         message += `⚡ Available Actions:\n`;
@@ -84,16 +94,16 @@ function displayRoomInfo() {
         message += `🎒 Items: ${room.items.length > 0 ? room.items.join(", ") : "None"}\n`;
         message += `⚡ Available Actions:\n`;
     }
-    // List available options in the room
+
     room.options.forEach((option, index) => {
         message += `  ${index + 1}. ${option}\n`;
     });
 
-    setTimeout(() => typeWriterEffect(message), 1000); // Delays the message display
+    displayMessage(message);
 }
 
 // Simulates a typewriter effect by displaying text character by character
-function typeWriterEffect(text, speed = 10) {
+function typeWriterEffect(text, speed = 20) {
     let index = 0;
     const outputElement = document.getElementById("game-output");
     if (!outputElement) return;
@@ -149,6 +159,7 @@ function resetGame() {
     health = 100;
     inventory = [];
     block_checker = false;
+    updateHealthDisplay();
     displayMessage("It was all a dream...");
     displayRoomInfo();
 }
@@ -323,6 +334,7 @@ function processCommand() {
             return;
         }
         
+        updateRoomImage(); // Update image before showing room info
 
         // Health system logic
         let damage = parseInt(gameData[currentRoom].room_damage);

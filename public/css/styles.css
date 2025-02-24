@@ -1,4 +1,8 @@
 /* General Styles */
+html { /* Or apply to the container itself */
+    scroll-behavior: smooth;
+}
+
 body {
     background: linear-gradient(to bottom, #3b3434, #2d2d2d);
     color: #e0e0e0;
@@ -144,7 +148,7 @@ body {
 }
 
 .game-output {
-    height: 800px;
+    height: 400px;
     padding: 1rem;
     background: rgba(0, 0, 0, 0.8);
     border-radius: 8px;
@@ -152,6 +156,7 @@ body {
     overflow-y: auto;
     overflow-anchor: none;
     border: 1px solid #333;
+    font-size: 0.9rem;
 }
 
 .welcome-message {
@@ -257,4 +262,20 @@ body {
     .submit-button {
         width: 100%;
     }
+}
+.game-illustration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Optional: Add margin or padding as needed */
+    margin: 20px 0;
+    padding: 10px; 
+}
+
+.game-illustration img {
+    /* Optional: Add max-width or max-height for responsiveness */
+    /* max-width: 100%; */
+    /* max-height: 100%; */
+    /* Optional: Add display: block; to remove any extra spacing */
+    display: block;
 }
