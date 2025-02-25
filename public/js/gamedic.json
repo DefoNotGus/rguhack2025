@@ -1,0 +1,57 @@
+{
+    "optionsAliases": {
+      "lift": 1,
+      "hallway": 2,
+      "staircase": 2,
+      "stairs": 2,
+      "emergency": 2,
+      "alarms": 1,
+      "window": 2,
+      "work": 3,
+      "leave":4,
+      "exit": 3,
+      "extinguish": 1,
+      "vending": 3,
+      "help": 2,
+      "celebrate": 1,
+      "instagram": 2
+    },
+    "commandAliases": {
+      "h": "help",
+      "bag": "inventory",
+      "items": "inventory",
+      "health": "health",
+      "hp": "health",
+      "pick": "take",
+      "grab": "take",
+      "get": "take",
+      "inv": "inventory",
+      "look": "look",
+      "reset": "reset",
+      "restart": "restart"
+    },
+    "itemAliases": {
+      "extinguisher": "take fire extinguisher",
+      "mask": "take mask",
+      "gloves": "take fire gloves",
+      "coat": "take lab coat",
+      "helmet": "take cycling helmet",
+      "power": "take power bank",
+      "boot": "take plastic boot",
+      "soup": "take soup in can",
+      "pillow": "take pillow",
+      "pizza": "take pizza!",
+      "take pizza": "take pizza!"
+    },
+    "emojiAliases": {
+      "one": "1",
+      "parrot": "1",
+      "ghost": "4",
+      "clown": "3",
+      "cool": "2",
+      "two": "2",
+      "three": "3",
+      "four": "4"
+    }
+  }
+  

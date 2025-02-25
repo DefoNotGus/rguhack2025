@@ -10,7 +10,7 @@
             "activate alarms",
             "jump out of a windows",
             "keep working",
-            "exit the room"
+            "leave the room"
         ]
     },
     "Lab again": {
@@ -44,7 +44,7 @@
         "description": "*there is fire everywhere* this room smells like a BBQ... oh wait... it's me!",
         "exits": ["Hallway", "Assambly Point"],
         "items": ["plastic boot", "soup in can", "pillow"],
-        "negative_impact": ["plastic boot", "cycling helmet", "lab coat"],
+        "negative_impact": ["cycling helmet", "lab coat"],
         "positive_impact": ["mask"],
         "room_damage": "25%",
         "options": [
@@ -57,7 +57,7 @@
         "description": "This room is burning and the emergency doors are closed!",
         "exits": ["Hallway", "Assambly Point"],
         "items": ["plastic boot", "soup in can", "pillow"],
-        "negative_impact": ["plastic boot", "cycling helmet", "lab coat"],
+        "negative_impact": ["cycling helmet", "lab coat"],
         "positive_impact": [],
         "room_damage": "55%",
         "options": [
@@ -69,7 +69,7 @@
         "description": "the space outside where everyone is safe",
         "exits": ["Lobby"],
         "items": ["pizza!"],
-        "negative_impact": [],
+        "negative_impact": ["plastic boot", "cycling helmet"],
         "positive_impact": [],
         "room_damage": "0",
         "options": [

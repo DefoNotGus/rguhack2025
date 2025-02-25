@@ -1,5 +1,6 @@
 // Game state variables
 let gameData = {};  // Stores room data loaded from JSON
+let aliasData = {}; // Stores alias mappings
 let currentRoom = "Lab";  // Tracks the player's current location
 let health = 100;  // Player's health
 let inventory = [];  // Items the player has collected
@@ -10,13 +11,19 @@ let choosingEmoji = true;
 // Asynchronously loads game data from a JSON file
 async function loadGameData() {
     try {
-        const response = await fetch("js/rooms.json"); // Fetch the room data
-        gameData = await response.json(); // Parse JSON data and store it in gameData
+        const [roomsResponse, aliasResponse] = await Promise.all([
+            fetch("js/rooms.json"), 
+            fetch("js/gamedic.json")
+        ]);
+
+        gameData = await roomsResponse.json();
+        aliasData = await aliasResponse.json(); // Store alias mappings
+
         displayMessage("You just woke up in a RGU lab \n Sleeping in the job again...");
-        askForEmoji(); // Ask for emoji first
+        askForEmoji();
     } catch (error) {
         console.error("Error loading game data:", error);
-        displayMessage("Error loading game data. Please try again."); // Show error message if data fails to load
+        displayMessage("Error loading game data. Please try again.");
     }
 }
 // Function to ask the player to choose an emoji with typewriter effect
@@ -24,12 +31,40 @@ function askForEmoji() {
     typeWriterEffect("Choose your player emoji:\n1. 🦜 (Parrot)\n2. 😎 (Cool)\n3. 🤡 (Clown)\n4. 👻 (Ghost)");
     document.getElementById("game-input").addEventListener("keydown", handleEmojiInput);
 }
+//Handle dictionary
+function resolveAlias(input) {
+    // Convert input to lowercase to handle case-insensitive matching
+    input = input.toLowerCase().trim();  
 
+    // Check if input is in commandAliases
+    if (aliasData.commandAliases[input]) {
+        return aliasData.commandAliases[input];
+    }
+
+    // Check if input is in itemAliases
+    if (aliasData.itemAliases[input]) {
+        return aliasData.itemAliases[input];
+    }
+
+    // Check if input is in emojiAliases
+    if (aliasData.emojiAliases[input]) {
+        return aliasData.emojiAliases[input];
+    }
+
+    // Check if input is in optionsAliases (and return as number)
+    if (aliasData.optionsAliases[input] !== undefined) {
+        return aliasData.optionsAliases[input];
+    }
+
+    // If no alias found, return original input
+    return input;
+}
 // Function to handle emoji input
 function handleEmojiInput(event) {
     if (event.key === "Enter") {
         let input = document.getElementById("game-input").value.trim();
         let emoji;
+        input = resolveAlias(input) 
 
         switch (input) {
             case "1":
@@ -196,23 +231,25 @@ function processCommand() {
     let input = document.getElementById("game-input").value.trim().toLowerCase();
     if (!input) return;
 
-    let decision = input; // Default to input
+    input = resolveAlias(input);
 
-    // Check if the input is a number between 1 and 5
-    if (!isNaN(input) && parseInt(input) >= 1 && parseInt(input) <= 5) {
-        let choiceIndex = parseInt(input) - 1; // Convert input to index
+    let decision = input;
+
+    // Ensure alias correctly converts to number
+    if (!isNaN(input)) {
+        let choiceIndex = parseInt(input) - 1;
 
         if (gameData[currentRoom] && gameData[currentRoom].options && gameData[currentRoom].options[choiceIndex]) {
-            decision = gameData[currentRoom].options[choiceIndex]; // Use the room option
+            decision = gameData[currentRoom].options[choiceIndex];
         }
     }
 
-    // Display user's command in the game output
     displayMessage(`${playeremoji} <strong>You:</strong> ${decision}`);
 
     document.getElementById("game-input").value = ""; // Clear input field
 
-    const args = input.split(" ");
+    // 🔥 FIX: Convert `input` to a string before `.split()`
+    const args = String(input).split(" ");
     const command = args[0];
 
     if (command === "help") {
